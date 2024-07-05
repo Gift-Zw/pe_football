@@ -1,15 +1,17 @@
 from django.db import models
 
 
-
 # Create your models here.
 class Tournament(models.Model):
     name = models.CharField(max_length=255)
     start_date = models.DateField()
-    end_date = models.DateField()
+    description = models.TextField(max_length=900)
+    venue = models.CharField(max_length=55)
     time = models.TimeField()
+    age_limit = models.IntegerField()
     participation_fee = models.DecimalField(max_digits=10, decimal_places=2)
     date_added = models.DateTimeField(auto_now_add=True)
+    is_deleted = models.BooleanField(default=False)
 
     def __str__(self):
         return self.name
@@ -29,7 +31,6 @@ class TournamentResults(models.Model):
     school1_score = models.IntegerField()
     school2_score = models.IntegerField()
     stage = models.CharField(max_length=20, choices=STAGE_CHOICES)
-    results_file = models.FileField(upload_to='results/', blank=True, null=True)
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

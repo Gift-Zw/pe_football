@@ -4,12 +4,13 @@ from . import views
 app_name = 'schools'
 
 urlpatterns = [
-    # path('register/', views.school_register, name='school_register'),
-    # path('login/', views.school_login, name='school_login'),
-    # path('dashboard/', views.school_dashboard, name='school_dashboard'),
-    # path('tournaments/', views.school_tournaments, name='school_tournaments'),
-    # path('tournaments/<int:tournament_id>/register/', views.register_for_tournament, name='register_for_tournament'),
-    # path('players/', views.player_list, name='player_list'),
-    # path('players/add/', views.add_player, name='add_player'),
+    path('register/', views.UserRegistrationView.as_view(), name='school_register'),
+    path('login/', views.UserLoginView.as_view(), name='school_login'),
+    path('dashboard/', views.dashboard_view, name='school_dashboard'),
+    path('upcoming-tournaments/', views.upcoming_tournaments_view, name='upcoming_tournaments'),
+    path('registerd-tournaments/', views.registered_tournaments_view, name='registered_tournaments'),
+    path('player-list/', views.players_list_view, name='player_list'),
+    path('players/create/', views.create_player_view, name='create_player'),
+    path('result-list/', views.results_list_view, name='result_list'),
     # path('tournaments/<int:tournament_id>/players/', views.select_players, name='select_players'),
 ]

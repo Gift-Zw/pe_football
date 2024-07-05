@@ -1,11 +1,11 @@
-{% extends 'management/base.html' %}
+{% extends 'schools/base.html' %}
 
 {% load static %}
 {% block content %}
 
 <div class="wrapper">
  <main role="main" class="main-content">
-     {% include 'management/navbar.html' %}
+     {% include 'schools/navbar.html' %}
 
         <div class="container-fluid">
                 {% if messages %}
@@ -24,18 +24,14 @@
             <div class="col-12">
               <h2 class="mb-2 page-title">All Player Profiles</h2>
               <p class="card-text">This is a table containing all the players that have been registered into the system </p>
-
-
-
               <div class="row my-4">
                 <!-- Small table -->
                 <div class="col-md-12">
                   <div class="card shadow">
+                      <div class="card-header">
+                      <button class="float-right btn btn-primary" data-toggle="modal" data-target="#verticalModal">Add New Player</button>
+                    </div>
                     <div class="card-body">
-{#                      <div class="form-group col-md-3" style="margin-left: 75%">#}
-{#                            <input type="text" class="form-control" id="searchAsset" placeholder="Search by serial number">#}
-{#                          </div>#}
-                      <!-- table -->
                       <table class="table datatables" id="dataTable-1">
                         <thead>
                           <tr>

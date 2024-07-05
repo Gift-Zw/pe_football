@@ -22,8 +22,8 @@
         {% endif %}
           <div class="row justify-content-center">
             <div class="col-12">
-              <h2 class="mb-2 page-title">All Player Profiles</h2>
-              <p class="card-text">This is a table containing all the players that have been registered into the system </p>
+              <h2 class="mb-2 page-title">Past Tournaments</h2>
+              <p class="card-text">This is a table containing the tournaments that were played </p>
 
 
 
@@ -37,43 +37,35 @@
 {#                          </div>#}
                       <!-- table -->
                       <table class="table datatables" id="dataTable-1">
-                        <thead>
+                       <thead>
                           <tr>
                             <th>#</th>
-                            <th><strong>Full Name</strong></th>
-                              <th><strong>Age</strong></th>
-                              <th><strong>D.O.B</strong></th>
-                              <th><strong>Position</strong></th>
-                               <th><strong>Cell</strong></th>
-                              <th><strong>National ID</strong></th>
-                              <th><strong>Guardian Name</strong></th>
-                              <th><strong>Guardian Contact</strong></th>
-                            <th><strong>School</strong></th>
-                             <th><strong>Approved</strong></th>
+                            <th><strong>Name</strong></th>
+                              <th><strong>Age Limit</strong></th>
+                            <th><strong>Start Date</strong></th>
+                            <th><strong>Time</strong></th>
+                               <th><strong>Venue</strong></th>
+                            <th><strong>Participation Fee</strong></th>
                             <th><strong>Date Added</strong></th>
                                <th><strong>Action</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for player in players %}
+                        {% for tournament in tournaments %}
                           <tr>
-                            <td>{{ player.id }}</td>
-                            <td>{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</td>
-                            <td>{{ player.age }}</td>
-                            <td>{{ player.date_of_birth }}</td>
-                            <td>{{ player.position }}</td>
-                            <td>${{ player.cell }}</td>
-                           <td>${{ player.national_id }}</td>
-                           <td>${{ player.guardian_name }}</td>
-                           <td>${{ player.guardian_contact }}</td>
-                           <td>${{ player.school.name }}</td>
-                           <td>${{ player.approved }}</td>
-                           <td>${{ player.created_at }}</td>
+                            <td>{{ tournament.id }}</td>
+                            <td>{{ tournament.name }}</td>
+                            <td>{{ tournament.age_limit }} years</td>
+                            <td>{{ tournament.start_date }}</td>
+                            <td>{{ tournament.time }}</td>
+                               <td>{{ tournament.venue }}</td>
+                            <td>${{ tournament.participation_fee }}</td>
+                            <td>{{ tournament.date_added }}</td>
                              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted sr-only">Action</span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Edit</a>
+                                <a class="dropdown-item" href="{% url 'management:admin_tournament_detail' tournament.id %}">View</a>
                                 <a class="dropdown-item" href="#">Remove</a>
                                 <a class="dropdown-item" href="#">Assign</a>
                               </div>

@@ -1,11 +1,12 @@
-{% extends 'base.html' %}
+{% extends 'schools/base.html' %}
 {% load static %}
 
+{% block title %} Chikoro {% endblock title %}
 {% block content %}
 
 
     <div class="wrapper">
-            {% include 'navbar.html' %}
+            {% include 'schools/navbar.html' %}
       <main role="main" class="main-content">
 
         <div class="container-fluid">
@@ -41,7 +42,7 @@
                       </span>
                       <h3 class="h4 mt-4 mb-1 text-white">Register a Beneficiary</h3>
                       <p class="text-white mb-4">Register your beneficiary to receive online donations</p>
-                      <a href="{% url 'register' %}" class="btn btn-lg bg-success-light text-white">Register<i class="fe fe-arrow-right fe-16 ml-2"></i></a>
+                      <a href="#" class="btn btn-lg bg-success-light text-white">Register<i class="fe fe-arrow-right fe-16 ml-2"></i></a>
                     </div> <!-- .card-body -->
                   </div>
 <!-- /.card-body -->
@@ -200,6 +201,6 @@ warrantyChartCtn && (warrantyChart = new ApexCharts(warrantyChartCtn, warrantyCh
 
 
 </div>
-     {% include 'scripts.html' %}
+     {% include 'schools/scripts.html' %}
 
 {% endblock content %}

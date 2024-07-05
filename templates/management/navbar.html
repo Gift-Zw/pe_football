@@ -20,7 +20,7 @@
           </div>
           <ul class="navbar-nav flex-fill w-100 mb-2">
             <li class="nav-item">
-              <a aria-expanded="false" class="nav-link" href="{% url 'schools:school_dashboard' %}" >
+              <a aria-expanded="false" class="nav-link" href="{% url 'management:admin_dashboard' %}" >
                 <i class="fe fe-home fe-16"></i>
                 <span class="ml-3 item-text">Dashboard</span><span class="sr-only">(current)</span>
               </a>
@@ -29,27 +29,46 @@
 
           <ul class="navbar-nav flex-fill w-100 mb-2">
             <li class="nav-item w-100">
-              <a class="nav-link" href="{% url 'schools:upcoming_tournaments' %}">
+              <a class="nav-link" href="{% url 'management:admin_upcoming_tournaments-list' %}">
                 <i class="fe fe-monitor fe-16"></i>
                 <span class="ml-3 item-text">Upcoming Tournaments</span>
               </a>
             </li>
             <li class="nav-item w-100">
-              <a class="nav-link" href="{% url 'schools:registered_tournaments' %}">
+              <a class="nav-link" href="{% url 'management:admin_past_tournaments-list' %}">
                 <i class="fe fe-tv fe-16"></i>
-                <span class="ml-3 item-text">Registered Tournaments</span>
+                <span class="ml-3 item-text">Past Tournaments</span>
+              </a>
+            </li>
+             <li class="nav-item w-100">
+              <a class="nav-link" href="{% url 'management:admin_tournament_registration' %}">
+                <i class="fe fe-download fe-16"></i>
+                <span class="ml-3 item-text">Tournament Registrations</span>
+              </a>
+            </li>
+              <li class="nav-item w-100">
+              <a class="nav-link" href="{% url 'management:admin_tournament_players' %}">
+                <i class="fe fe-users fe-16"></i>
+                <span class="ml-3 item-text">Tournament Players</span>
               </a>
             </li>
 
               <li class="nav-item w-100">
-              <a class="nav-link" href="{% url 'schools:result_list' %}">
+              <a class="nav-link" href="{% url 'management:admin_result_list' %}">
                 <i class="fe fe-clipboard fe-16"></i>
                 <span class="ml-3 item-text">Results List</span>
               </a>
             </li>
 
+             <li class="nav-item w-100">
+              <a class="nav-link" href="{% url 'management:admin_schools' %}">
+                <i class="fe fe-book-open fe-16"></i>
+                <span class="ml-3 item-text">Schools</span>
+              </a>
+            </li>
+
               <li class="nav-item w-100">
-              <a class="nav-link" href="{% url 'schools:player_list' %}">
+              <a class="nav-link" href="{% url 'management:admin_player_list' %}">
                 <i class="fe fe-users fe-16"></i>
                 <span class="ml-3 item-text">All Players</span>
               </a>
@@ -63,7 +82,7 @@
 {#            </li>#}
 
             <li class="nav-item w-100">
-              <a class="nav-link" href="#">
+              <a class="nav-link" href="{% url 'management:admin_logout' %}">
                 <i class="fe fe-log-out fe-16"></i>
                 <span class="ml-3 item-text">Log Out</span>
               </a>

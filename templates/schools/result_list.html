@@ -1,11 +1,11 @@
-{% extends 'management/base.html' %}
+{% extends 'schools/base.html' %}
 
 {% load static %}
 {% block content %}
 
 <div class="wrapper">
  <main role="main" class="main-content">
-     {% include 'management/navbar.html' %}
+     {% include 'schools/navbar.html' %}
 
         <div class="container-fluid">
                 {% if messages %}
@@ -22,11 +22,8 @@
         {% endif %}
           <div class="row justify-content-center">
             <div class="col-12">
-              <h2 class="mb-2 page-title">All Player Profiles</h2>
-              <p class="card-text">This is a table containing all the players that have been registered into the system </p>
-
-
-
+              <h2 class="mb-2 page-title">Tournament Result List</h2>
+              <p class="card-text">This is a table containing all the results of the tournaments you attended </p>
               <div class="row my-4">
                 <!-- Small table -->
                 <div class="col-md-12">
@@ -39,36 +36,28 @@
                       <table class="table datatables" id="dataTable-1">
                         <thead>
                           <tr>
-                            <th>#</th>
-                            <th><strong>Full Name</strong></th>
-                              <th><strong>Age</strong></th>
-                              <th><strong>D.O.B</strong></th>
-                              <th><strong>Position</strong></th>
-                               <th><strong>Cell</strong></th>
-                              <th><strong>National ID</strong></th>
-                              <th><strong>Guardian Name</strong></th>
-                              <th><strong>Guardian Contact</strong></th>
-                            <th><strong>School</strong></th>
-                             <th><strong>Approved</strong></th>
+                            <th><strong>#</strong></th>
+                            <th><strong>Tournament Name</strong></th>
+                            <th><strong>Date</strong></th>
+                            <th><strong>Stage</strong></th>
+                             <th><strong>School 1</strong></th>
+                            <th><strong>Scoreline</strong></th>
+                            <th><strong>School 2</strong></th>
                             <th><strong>Date Added</strong></th>
                                <th><strong>Action</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for player in players %}
+                        {% for result in tournament_results %}
                           <tr>
-                            <td>{{ player.id }}</td>
-                            <td>{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</td>
-                            <td>{{ player.age }}</td>
-                            <td>{{ player.date_of_birth }}</td>
-                            <td>{{ player.position }}</td>
-                            <td>${{ player.cell }}</td>
-                           <td>${{ player.national_id }}</td>
-                           <td>${{ player.guardian_name }}</td>
-                           <td>${{ player.guardian_contact }}</td>
-                           <td>${{ player.school.name }}</td>
-                           <td>${{ player.approved }}</td>
-                           <td>${{ player.created_at }}</td>
+                            <td>{{ result.id }}</td>
+                            <td>{{ result.tournament.name }}</td>
+                            <td>{{ result.tournament.start_date }}</td>
+                            <td>{{ result.stage }}</td>
+                            <td>{{ result.school1.name }}</td>
+                            <td> {{ result.school1_score }} - {{ result.school2_score }} </td>
+                            <td>{{ result.school2.name }}</td>
+                            <td>{{ result.created_at }}</td>
                              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted sr-only">Action</span>
                               </button>
@@ -78,6 +67,7 @@
                                 <a class="dropdown-item" href="#">Assign</a>
                               </div>
                             </td>
+
                           </tr>
                         {% endfor %}
                         </tbody>

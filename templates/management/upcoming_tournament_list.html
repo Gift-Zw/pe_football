@@ -1,10 +1,175 @@
-<!DOCTYPE html>
-<html lang="en">
-<head>
-    <meta charset="UTF-8">
-    <title>Title</title>
-</head>
-<body>
+{% extends 'management/base.html' %}
 
-</body>
-</html>
+{% load static %}
+{% block content %}
+
+<div class="wrapper">
+ <main role="main" class="main-content">
+     {% include 'management/navbar.html' %}
+
+        <div class="container-fluid">
+                {% if messages %}
+        {% for message in messages %}
+            <div class="col-12 mb-4">
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show " style="text-color:blue" role="alert">
+                {{ message }}
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                 </button>
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <h2 class="mb-2 page-title">Upcoming Tournaments</h2>
+              <p class="card-text">This is a table containing all the upcoming tournaments in the system </p>
+
+
+            <div class="modal fade" id="verticalModal" tabindex="-1" role="dialog" aria-labelledby="verticalModalTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="verticalModalTitle">Add New Tournament</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                              <form method="post" action="{% url 'management:admin_upcoming_tournaments-list' %}">
+                                  {% csrf_token %}
+                        <div class="modal-body">
+                                <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Name:</label>
+                                  {{ form.name }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Age Limit:</label>
+                                  {{ form.age_limit }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Start Date:</label>
+                                  {{ form.start_date }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Time:</label>
+                                  {{ form.time }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Venue:</label>
+                                  {{ form.venue }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Participation Fee:</label>
+                                  {{ form.participation_fee }}
+                                </div>
+                                <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Description:</label>
+                                  {{ form.description }}
+                                </div>
+
+                        </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
+                              <button  type="submit" class="btn mb-2 btn-primary">Submit</button>
+                            </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+
+              <div class="row my-4">
+                <!-- Small table -->
+                <div class="col-md-12">
+                  <div class="card shadow">
+                  <div class="card-header">
+                      <button class="float-right btn btn-primary" data-toggle="modal" data-target="#verticalModal">Add New Tournament</button>
+                    </div>
+                    <div class="card-body">
+{#                      <div class="form-group col-md-3" style="margin-left: 75%">#}
+{#                            <input type="text" class="form-control" id="searchAsset" placeholder="Search by serial number">#}
+{#                          </div>#}
+                      <!-- table -->
+                      <table class="table datatables" id="dataTable-1">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th><strong>Name</strong></th>
+                              <th><strong>Age Limit</strong></th>
+                            <th><strong>Start Date</strong></th>
+                            <th><strong>Time</strong></th>
+                               <th><strong>Venue</strong></th>
+                            <th><strong>Participation Fee</strong></th>
+                            <th><strong>Date Added</strong></th>
+                               <th><strong>Action</strong></th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        {% for tournament in tournaments %}
+                          <tr>
+                            <td>{{ tournament.id }}</td>
+                            <td>{{ tournament.name }}</td>
+                            <td>{{ tournament.age_limit }} years</td>
+                            <td>{{ tournament.start_date }}</td>
+                            <td>{{ tournament.time }}</td>
+                               <td>{{ tournament.venue }}</td>
+                            <td>${{ tournament.participation_fee }}</td>
+                            <td>{{ tournament.date_added }}</td>
+                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted sr-only">Action</span>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="{% url 'management:admin_tournament_detail' tournament.id %}">View</a>
+                                <a class="dropdown-item" href="#">Remove</a>
+                                <a class="dropdown-item" href="#">Assign</a>
+                              </div>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div> <!-- simple table -->
+              </div> <!-- end section -->
+            </div> <!-- .col-12 -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+      </main> <!-- main -->
+</div>
+<script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/simplebar.min.js' %}"></script>
+    <script src='{% static 'js/daterangepicker.js' %}'></script>
+    <script src='{% static 'js/jquery.stickOnScroll.js' %}'></script>
+    <script src="{% static 'js/tinycolor-min.js' %}"></script>
+    <script src="{% static 'js/config.js' %}"></script>
+    <script src='{% static 'js/jquery.dataTables.min.js' %}'></script>
+    <script src='{% static 'js/dataTables.bootstrap4.min.js' %}'></script>
+    <script>
+      $('#dataTable-1').DataTable(
+      {
+        autoWidth: true,
+        "lengthMenu": [
+          [16, 32, 64, -1],
+          [16, 32, 64, "All"]
+        ]
+      });
+    </script>
+    <script src="{% static 'js/apps.js' %}"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag()
+      {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-56159088-1');
+    </script>
+
+
+{% endblock content %}

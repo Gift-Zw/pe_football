@@ -1,0 +1,258 @@
+{% extends 'management/base.html' %}
+{% load  static %}
+
+{% block content %}
+
+    <div class="wrapper">
+    {% include 'management/navbar.html' %}
+
+<main role="main" class="main-content">
+        <div class="container-fluid">
+          <div class="row justify-content-center">
+            <div class="col-12">
+              <h2 class="h3 mb-4 page-title">Tournament Details</h2>
+              <div class="row mt-5 align-items-center">
+                <div class="col-md-3 text-center mb-5">
+                  <div class="avatar avatar-xl">
+                    <img src="{% static 'assets/avatars/face-1.jpg' %}" alt="..." class="avatar-img rounded-circle">
+                  </div>
+                </div>
+                <div class="col">
+                  <div class="row align-items-center">
+                    <div class="col-md-7">
+                      <h3 class="mb-1">{{ tournament.name }}</h3>
+                           <div class="row mt-3">
+                            <div class="col-md-4">
+                                <p>Date: <strong>{{ tournament.start_date }}</strong></p>
+                            </div>
+                            <div class="col-md-3">
+                                <p>Time: <strong>{{ tournament.time }}</strong></p>
+                            </div>
+                               <div class="col-md-5">
+                                <p>Venue: <strong>{{ tournament.venue }}</strong></p>
+                            </div>
+                        </div>
+                        <div class="row mt-1">
+                            <div class="col-md-6">
+                                <p>Participation Fee: <strong>${{ tournament.participation_fee }}</strong></p>
+                            </div>
+                            <div class="col-md-6">
+                                <p>Age Limit: <strong>{{ tournament.age_limit }}</strong></p>
+                            </div>
+                        </div>
+                    </div>
+                  </div>
+                  <div class="row mb-4">
+                    <div class="col-md-7">
+                      <p class="text-muted"> {{ tournament.description }} </p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            <div class="row mb-4">
+              <div class="col-md-12 col-lg-6">
+                  <div class="card shadow">
+                    <div class="card-header">
+                      <strong class="card-title">Registered Schools</strong>
+                    </div>
+                    <div class="card-body my-n2">
+                        <table class="table table-striped table-hover table-borderless">
+                        <thead>
+                          <tr>
+                            <th><strong>#</strong></th>
+                            <th><strong>Name</strong></th>
+                              <th><strong>Phone</strong></th>
+                            <th><strong>City</strong></th>
+                               <th><strong>Date Registered</strong></th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        {% for donation in donations %}
+                          <tr>
+                            <td>{{ donation.id }}</td>
+                            <td>{{ donation.donor_name }}</td>
+                            <td>{{ donation.currency }}</td>
+                            <td>{{ donation.amount }}</td>
+                            <td>{{ donation.payment_method }}</td>
+                            <td>{{ donation.date }}</td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+                 <div class="col-md-12 col-lg-6">
+                  <div class="card shadow">
+                    <div class="card-header">
+                      <strong class="card-title">Tournament Results</strong>
+                        <button class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#verticalModal">Add New Result</button>
+                       <div class="modal fade" id="verticalModal" tabindex="-1" role="dialog" aria-labelledby="verticalModalTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="verticalModalTitle">Add New Result</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                              <form method="post" action="{% url 'management:admin_tournament_detail' tournament.id %}">
+                                  {% csrf_token %}
+                        <div class="modal-body">
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">School 1:</label>
+                                  {{ form.school1 }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">School1 Score:</label>
+                                  {{ form.school1_score }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">School 2:</label>
+                                  {{ form.school2 }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">School 2 Score:</label>
+                                  {{ form.school2_score }}
+                                </div>
+                            <div class="form-group">
+                                  <label for="recipient-name" class="col-form-label">Game Stage:</label>
+                                  {{ form.stage }}
+                                </div>
+
+                        </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
+                              <button  type="submit" class="btn mb-2 btn-primary">Submit</button>
+                            </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="card-body my-n2">
+                        <table class="table table-striped table-hover table-borderless">
+                        <thead>
+                          <tr>
+                            <th><strong>#</strong></th>
+                            <th><strong>Date</strong></th>
+                            <th><strong>Stage</strong></th>
+                             <th><strong>School 1</strong></th>
+                            <th><strong>Scoreline</strong></th>
+                            <th><strong>School 2</strong></th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        {% for result in tournament_results %}
+                          <tr>
+                            <td>{{ result.id }}</td>
+                            <td>{{ result.tournament.start_date }}</td>
+                            <td>{{ result.stage }}</td>
+                            <td>{{ result.school1.name }}</td>
+                            <td> {{ result.school1_score }} - {{ result.school2_score }} </td>
+                            <td>{{ result.school2.name }}</td>
+                            <td>{{ result.created_at }}</td>
+
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            <div class="row mb-4">
+             <div class="col-md-12 col-lg-12">
+                  <div class="card shadow">
+                    <div class="card-header">
+                      <strong class="card-title">Registered Players</strong>
+                    </div>
+                    <div class="card-body my-n2">
+                         <table class="table datatables" id="dataTable-1">
+                        <thead>
+                          <tr>
+                            <th>#</th>
+                            <th><strong>Full Name</strong></th>
+                              <th><strong>Age</strong></th>
+                              <th><strong>D.O.B</strong></th>
+                              <th><strong>Position</strong></th>
+                            <th><strong>School</strong></th>
+                             <th><strong>Approved</strong></th>
+                            <th><strong>Date Added</strong></th>
+                               <th><strong>Action</strong></th>
+                          </tr>
+                        </thead>
+                        <tbody id="tbody">
+                        {% for player in players %}
+                          <tr>
+                            <td>{{ player.id }}</td>
+                            <td>{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</td>
+                            <td>{{ player.age }}</td>
+                            <td>{{ player.date_of_birth }}</td>
+                            <td>{{ player.position }}</td>
+                            <td>${{ player.cell }}</td>
+                           <td>${{ player.national_id }}</td>
+                           <td>${{ player.guardian_name }}</td>
+                           <td>${{ player.guardian_contact }}</td>
+                           <td>${{ player.school.name }}</td>
+                           <td>${{ player.approved }}</td>
+                           <td>${{ player.created_at }}</td>
+                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted sr-only">Action</span>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="#">Edit</a>
+                                <a class="dropdown-item" href="#">Remove</a>
+                                <a class="dropdown-item" href="#">Assign</a>
+                              </div>
+                            </td>
+                          </tr>
+                        {% endfor %}
+                        </tbody>
+                      </table>
+                    </div>
+                  </div>
+                </div>
+            </div>
+            </div> <!-- /.col-12 -->
+          </div> <!-- .row -->
+        </div> <!-- .container-fluid -->
+      </main>
+    </div>
+
+    <script src="{% static 'js/jquery.min.js' %}"></script>
+    <script src="{% static 'js/popper.min.js' %}"></script>
+    <script src="{% static 'js/moment.min.js' %}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
+    <script src="{% static 'js/simplebar.min.js' %}"></script>
+    <script src='{% static 'js/daterangepicker.js' %}'></script>
+    <script src='{% static 'js/jquery.stickOnScroll.js' %}'></script>
+    <script src="{% static 'js/tinycolor-min.js' %}"></script>
+    <script src="{% static 'js/config.js' %}"></script>
+    <script src='{% static 'js/jquery.dataTables.min.js' %}'></script>
+    <script src='{% static 'js/dataTables.bootstrap4.min.js' %}'></script>
+    <script>
+      $('#dataTable-1').DataTable(
+      {
+        autoWidth: true,
+        "lengthMenu": [
+          [16, 32, 64, -1],
+          [16, 32, 64, "All"]
+        ]
+      });
+    </script>
+    <script src="{% static 'js/apps.js' %}"></script>
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+
+    <script>
+      window.dataLayer = window.dataLayer || [];
+
+      function gtag()
+      {
+        dataLayer.push(arguments);
+      }
+      gtag('js', new Date());
+      gtag('config', 'UA-56159088-1');
+    </script>
+
+{% endblock content %}
