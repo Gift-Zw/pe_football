@@ -1,11 +1,14 @@
 from django.contrib import messages
 from django.contrib.auth import logout
+from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect
+from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
 from .models import Tournament, TournamentResults
 from schools.models import SchoolProfile, Player, TournamentPlayer, TournamentRegistration
 from .forms import TournamentForm, TournamentResultsForm
 from django import forms
+from .decorators import admin_required
 
 
 STAGE_CHOICES = [
@@ -17,23 +20,37 @@ STAGE_CHOICES = [
 ]
 
 
+class UserLoginView(LoginView):
+    template_name = 'management/user_login.html'
+
+    def get_success_url(self):
+        return reverse_lazy('management:admin_dashboard')
+
+
+@admin_required()
 def dashboard_view(request):
     context = {}
     return render(request, 'management/manager_dash.html', context)
 
 
+@admin_required()
 def player_list_view(request):
     context = {
-        'players': Player.objects.all()
+        'players': Player.objects.all(),
     }
     return render(request, 'management/player_list.html', context)
 
 
-def player_profile_view(request):
-    context = {}
+@admin_required()
+def player_profile_view(request, id):
+    player = Player.objects.filter(id=id).first()
+    context = {
+        'player': player,
+    }
     return render(request, 'management/player_profile.html', context)
 
 
+@admin_required()
 def upcoming_tournament_list_view(request):
     if request.method == "POST":
         form = TournamentForm(request.POST)
@@ -62,6 +79,7 @@ def upcoming_tournament_list_view(request):
     return render(request, 'management/upcoming_tournament_list.html', context)
 
 
+@admin_required()
 def past_tournament_list_view(request):
     context = {
         'tournaments': Tournament.objects.all()
@@ -69,6 +87,8 @@ def past_tournament_list_view(request):
     return render(request, 'management/past_tournament_list_view.html', context)
 
 
+
+@admin_required()
 def tournament_detail_view(request, id):
     tournament = Tournament.objects.filter(id=id).first()
 
@@ -117,16 +137,22 @@ def tournament_detail_view(request, id):
     return render(request, 'management/tournament_details.html', context)
 
 
+
+@admin_required()
 def tournament_players_view(request):
     context = {}
     return render(request, 'management/tournament_players.html', context)
 
 
+
+@admin_required()
 def tournament_registrations_view(request):
     context = {}
     return render(request, 'management/tournament_registrations.html', context)
 
 
+
+@admin_required()
 def schools_view(request):
     context = {
         'schools': SchoolProfile.objects.all()
@@ -134,11 +160,14 @@ def schools_view(request):
     return render(request, 'management/schools.html', context)
 
 
+@admin_required()
 def users_view(request):
     context = {}
     return render(request, 'management/users.html', context)
 
 
+
+@admin_required()
 def results_list_view(request):
     if request.method == "POST":
         form = TournamentResultsForm(request.POST)

@@ -1,27 +1,68 @@
-{% extends 'management/base.html' %}
+{% extends 'schools/base.html' %}
 {% load  static %}
 
+{% block title %} {{ name }} {% endblock title %}
 {% block content %}
 
     <div class="wrapper">
-    {% include 'management/navbar.html' %}
+    {% include 'schools/navbar.html' %}
 
 <main role="main" class="main-content">
         <div class="container-fluid">
+                        {% if messages %}
+        {% for message in messages %}
+            <div class="col-12 mb-4">
+              <div class="alert alert-{{ message.tags }} alert-dismissible fade show " style="text-color:blue" role="alert">
+                {{ message }}
+                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+                 </button>
+                </div>
+            </div>
+        {% endfor %}
+        {% endif %}
           <div class="row justify-content-center">
             <div class="col-12">
-              <h2 class="h3 mb-4 page-title">Tournament Details</h2>
+              <h2 class="h3 mb-4 page-title">{{ tournament.name }}</h2>
+            {% if is_registered %}
+                {% if reg.approved %}
+                    <h5 class="float-right">Approved</h5>
+                    {% else %}
+                    <h5 class="float-right badge-warning">Pending approval</h5>
+                    {% endif %}
+            {% else %}
+            <a> <button class="float-right btn btn-primary btn" data-toggle="modal" data-target="#verticalModal">Register for Tournament</button></a>
+            {% endif %}
+            <div class="modal fade" id="verticalModal" tabindex="-1" role="dialog" aria-labelledby="verticalModalTitle" aria-hidden="true">
+                        <div class="modal-dialog modal-dialog-centered" role="document">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h5 class="modal-title" id="verticalModalTitle">Register for {{ tournament.name }}</h5>
+                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                <span aria-hidden="true">&times;</span>
+                              </button>
+                            </div>
+                              <form method="post" enctype="multipart/form-data" action="{% url 'schools:tournament_detail' tournament.id %}">
+                                  {% csrf_token %}
+                        <div class="modal-body">
+                            <p> Please upload a clear and legible proof of payment for the participation fee.<br> Once your proof of payment has been verified, you will be notified through a phone call or email.<br> After verification, you will be granted access to register your players for the tournament.<br> If you have any questions or need further assistance, please contact our support team.</p>
+                            <div class="form-group">
+                                  {{ form.proof_of_payment }}
+                                </div>
+                        </div>
+                            <div class="modal-footer">
+                              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
+                              <button  type="submit" class="btn mb-2 btn-primary">Register</button>
+                            </div>
+                              </form>
+                          </div>
+                        </div>
+                      </div>
               <div class="row mt-5 align-items-center">
-                <div class="col-md-3 text-center mb-5">
-                  <div class="avatar avatar-xl">
-                    <img src="{% static 'assets/avatars/face-1.jpg' %}" alt="..." class="avatar-img rounded-circle">
-                  </div>
-                </div>
                 <div class="col">
                   <div class="row align-items-center">
                     <div class="col-md-7">
-                      <h3 class="mb-1">{{ tournament.name }}</h3>
-                           <div class="row mt-3">
+                           <div class="row mt-1">
                             <div class="col-md-4">
                                 <p>Date: <strong>{{ tournament.start_date }}</strong></p>
                             </div>
@@ -86,49 +127,6 @@
                   <div class="card shadow">
                     <div class="card-header">
                       <strong class="card-title">Tournament Results</strong>
-                        <button class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#verticalModal">Add New Result</button>
-                       <div class="modal fade" id="verticalModal" tabindex="-1" role="dialog" aria-labelledby="verticalModalTitle" aria-hidden="true">
-                        <div class="modal-dialog modal-dialog-centered" role="document">
-                          <div class="modal-content">
-                            <div class="modal-header">
-                              <h5 class="modal-title" id="verticalModalTitle">Add New Result</h5>
-                              <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                                <span aria-hidden="true">&times;</span>
-                              </button>
-                            </div>
-                              <form method="post" action="{% url 'management:admin_tournament_detail' tournament.id %}">
-                                  {% csrf_token %}
-                        <div class="modal-body">
-                            <div class="form-group">
-                                  <label for="recipient-name" class="col-form-label">School 1:</label>
-                                  {{ form.school1 }}
-                                </div>
-                            <div class="form-group">
-                                  <label for="recipient-name" class="col-form-label">School1 Score:</label>
-                                  {{ form.school1_score }}
-                                </div>
-                            <div class="form-group">
-                                  <label for="recipient-name" class="col-form-label">School 2:</label>
-                                  {{ form.school2 }}
-                                </div>
-                            <div class="form-group">
-                                  <label for="recipient-name" class="col-form-label">School 2 Score:</label>
-                                  {{ form.school2_score }}
-                                </div>
-                            <div class="form-group">
-                                  <label for="recipient-name" class="col-form-label">Game Stage:</label>
-                                  {{ form.stage }}
-                                </div>
-
-                        </div>
-                            <div class="modal-footer">
-                              <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
-                              <button  type="submit" class="btn mb-2 btn-primary">Submit</button>
-                            </div>
-                              </form>
-                          </div>
-                        </div>
-                      </div>
                     </div>
                     <div class="card-body my-n2">
                         <table class="table table-striped table-hover table-borderless">
@@ -161,11 +159,13 @@
                   </div>
                 </div>
             </div>
+            {% if reg.approved %}
             <div class="row mb-4">
              <div class="col-md-12 col-lg-12">
                   <div class="card shadow">
                     <div class="card-header">
-                      <strong class="card-title">All Registered Players</strong>
+                      <strong class="card-title">Your Registered Players</strong>
+                        <a> <button class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#verticalModal">Register Player</button></a>
                     </div>
                     <div class="card-body my-n2">
                          <table class="table datatables" id="dataTable-1">
@@ -214,6 +214,7 @@
                   </div>
                 </div>
             </div>
+            {% endif %}
             </div> <!-- /.col-12 -->
           </div> <!-- .row -->
         </div> <!-- .container-fluid -->

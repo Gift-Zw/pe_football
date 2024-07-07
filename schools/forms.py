@@ -3,12 +3,15 @@ from .models import SchoolProfile, Player, TournamentRegistration, TournamentPla
 from core.models import User
 from management.models import Tournament
 
+PLAYER_POSITIONS = (
+    ('Goalkeeper', 'Goalkeeper'),
+    ('Defender', 'Defender'),
+    ('Midfielder', 'Midfielder'),
+    ('Forward', 'Forward'),
+)
+
 
 class SchoolProfileForm(forms.Form):
-    user = forms.ModelChoiceField(
-        queryset=User.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
     name = forms.CharField(
         max_length=255,
         widget=forms.TextInput(attrs={'class': 'form-control'})
@@ -34,10 +37,6 @@ class SchoolProfileForm(forms.Form):
 
 
 class PlayerForm(forms.Form):
-    school = forms.ModelChoiceField(
-        queryset=SchoolProfile.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
     passport_photo = forms.ImageField(
         widget=forms.FileInput(attrs={'class': 'form-control'})
     )
@@ -102,21 +101,13 @@ class PlayerForm(forms.Form):
         max_length=255,
         widget=forms.TextInput(attrs={'class': 'form-control'})
     )
-    position = forms.CharField(
-        max_length=255,
-        widget=forms.TextInput(attrs={'class': 'form-control'})
+    position = forms.ChoiceField(
+        choices=PLAYER_POSITIONS,
+        widget=forms.Select(attrs={'class': 'form-control'})
     )
 
 
 class TournamentRegistrationForm(forms.Form):
-    school = forms.ModelChoiceField(
-        queryset=SchoolProfile.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
-    tournament = forms.ModelChoiceField(
-        queryset=Tournament.objects.all(),
-        widget=forms.Select(attrs={'class': 'form-control'})
-    )
     proof_of_payment = forms.FileField(
         widget=forms.FileInput(attrs={'class': 'form-control'})
     )

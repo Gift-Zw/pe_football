@@ -4,7 +4,7 @@ from . import views
 app_name = 'management'
 
 urlpatterns = [
-    # path('login/', views.admin_login, name='admin_login'),
+    path('login/', views.UserLoginView.as_view(), name='admin_login'),
     path('dashboard/', views.dashboard_view, name='admin_dashboard'),
     path('past-tournaments-list/', views.past_tournament_list_view, name='admin_past_tournaments-list'),
     path('upcoming-tournaments-list/', views.upcoming_tournament_list_view, name='admin_upcoming_tournaments-list'),
@@ -14,7 +14,7 @@ urlpatterns = [
     path('results-list/', views.results_list_view, name="admin_result_list"),
     path('schools/', views.schools_view, name="admin_schools"),
     path('players/', views.player_list_view, name="admin_player_list"),
-    path('player-profile/', views.player_profile_view, name="admin_player_profile"),
+    path('player-profile/<int:id>/', views.player_profile_view, name="admin_player_profile"),
     path('logout/', views.logout_view, name="admin_logout"),
     path('users/', views.users_view, name="admin_users"),
     # path('tournaments/<int:tournament_id>/approve/', views.approve_tournament_registration, name='approve_tournament_registration'),

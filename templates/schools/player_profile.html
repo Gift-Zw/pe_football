@@ -1,10 +1,10 @@
-{% extends 'management/base.html' %}
+{% extends 'schools/base.html' %}
 {% load  static %}
 
 {% block content %}
 
     <div class="wrapper">
-    {% include 'management/navbar.html' %}
+    {% include 'schools/navbar.html' %}
 
 <main role="main" class="main-content">
         <div class="container-fluid">
@@ -17,7 +17,7 @@
                 <div class="col">
                   <div class="row align-items-center">
                     <div class="col-md-12">
-                                    <h2 class="h3 mb-4 page-title">{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</h2>
+                                    <h2 class="h3 mb-4 mt-3 page-title">{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</h2>
                            <div class="row mt-3">
                             <div class="col-md-2">
                                 <p>Age: <strong>{{ player.age }}</strong></p>

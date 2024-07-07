@@ -1,6 +1,9 @@
 {% extends 'schools/base.html' %}
 
 {% load static %}
+
+{% block title %} {{ name }} {% endblock title %}
+
 {% block content %}
 
 <div class="wrapper">
@@ -37,7 +40,7 @@
                       <table class="table datatables" id="dataTable-1">
                         <thead>
                           <tr>
-                            <th>#</th>
+                            <th><strong>#</strong></th>
                             <th><strong>Name</strong></th>
                               <th><strong>Age Limit</strong></th>
                             <th><strong>Start Date</strong></th>
@@ -63,9 +66,8 @@
                                 <span class="text-muted sr-only">Action</span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">View</a>
-                                <a class="dropdown-item" href="#">Remove</a>
-                                <a class="dropdown-item" href="#">Assign</a>
+                                <a class="dropdown-item" href="{% url 'schools:tournament_detail' tournament.id %}">View</a>
+                                <a class="dropdown-item" href="#">Register</a>
                               </div>
                             </td>
                           </tr>
