@@ -1,7 +1,7 @@
 from django.contrib import messages
 from django.contrib.auth import logout
 from django.contrib.auth.views import LoginView
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
 from .models import Tournament, TournamentResults
@@ -9,7 +9,6 @@ from schools.models import SchoolProfile, Player, TournamentPlayer, TournamentRe
 from .forms import TournamentForm, TournamentResultsForm
 from django import forms
 from .decorators import admin_required
-
 
 STAGE_CHOICES = [
     ('Group Stage', 'Group Stage'),
@@ -87,18 +86,17 @@ def past_tournament_list_view(request):
     return render(request, 'management/past_tournament_list_view.html', context)
 
 
-
 @admin_required()
 def tournament_detail_view(request, id):
     tournament = Tournament.objects.filter(id=id).first()
 
     class InTournamentResultsForm(forms.Form):
         school1 = forms.ModelChoiceField(
-            queryset=SchoolProfile.objects.all(),
+            queryset=SchoolProfile.objects.filter(tournamentregistration__tournament=tournament),
             widget=forms.Select(attrs={'class': 'form-control'})
         )
         school2 = forms.ModelChoiceField(
-            queryset=SchoolProfile.objects.all(),
+            queryset=SchoolProfile.objects.filter(tournamentregistration__tournament=tournament),
             widget=forms.Select(attrs={'class': 'form-control'})
         )
         school1_score = forms.IntegerField(
@@ -117,13 +115,14 @@ def tournament_detail_view(request, id):
         if form.is_valid():
             result = TournamentResults.objects.create(
                 tournament=tournament,
-                school1=form.data['school1'],
-                school2=form.data['school2'],
+                school1=SchoolProfile.objects.get(id=form.data['school1']),
+                school2=SchoolProfile.objects.get(id=form.data['school2']),
                 school1_score=form.data['school1_score'],
                 school2_score=form.data['school2_score'],
                 stage=form.data['stage']
             )
             result.save()
+            print('Heyyyyyy')
             return redirect('management:admin_tournament_detail', tournament.id)
         else:
             messages.error(request, form.errors)
@@ -132,10 +131,11 @@ def tournament_detail_view(request, id):
 
     context = {
         'tournament': tournament,
-        'form': InTournamentResultsForm()
+        'form': InTournamentResultsForm(),
+        'registered_schools': SchoolProfile.objects.filter(tournamentregistration__tournament=tournament),
+        'results': TournamentResults.objects.filter(tournament=tournament)
     }
     return render(request, 'management/tournament_details.html', context)
-
 
 
 @admin_required()
@@ -144,12 +144,21 @@ def tournament_players_view(request):
     return render(request, 'management/tournament_players.html', context)
 
 
-
 @admin_required()
 def tournament_registrations_view(request):
-    context = {}
+    context = {
+        'regs': TournamentRegistration.objects.all()
+    }
     return render(request, 'management/tournament_registrations.html', context)
 
+
+@admin_required()
+def registration_approval_view(request, id):
+    registration = get_object_or_404(TournamentRegistration, id=id)
+    registration.approved = True
+    registration.save()
+    messages.success(request, 'Registration status has been updated.')
+    return redirect('management:admin_tournament_registration')
 
 
 @admin_required()
@@ -164,7 +173,6 @@ def schools_view(request):
 def users_view(request):
     context = {}
     return render(request, 'management/users.html', context)
-
 
 
 @admin_required()

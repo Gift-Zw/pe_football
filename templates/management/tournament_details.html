@@ -63,18 +63,15 @@
                             <th><strong>Name</strong></th>
                               <th><strong>Phone</strong></th>
                             <th><strong>City</strong></th>
-                               <th><strong>Date Registered</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for donation in donations %}
+                        {% for school in registered_schools %}
                           <tr>
-                            <td>{{ donation.id }}</td>
-                            <td>{{ donation.donor_name }}</td>
-                            <td>{{ donation.currency }}</td>
-                            <td>{{ donation.amount }}</td>
-                            <td>{{ donation.payment_method }}</td>
-                            <td>{{ donation.date }}</td>
+                            <td>{{ school.id }}</td>
+                            <td>{{ school.name }}</td>
+                            <td>{{ school.phone }}</td>
+                            <td>{{ school.city }}</td>
                           </tr>
                         {% endfor %}
                         </tbody>
@@ -135,7 +132,6 @@
                         <thead>
                           <tr>
                             <th><strong>#</strong></th>
-                            <th><strong>Date</strong></th>
                             <th><strong>Stage</strong></th>
                              <th><strong>School 1</strong></th>
                             <th><strong>Scoreline</strong></th>
@@ -143,15 +139,13 @@
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for result in tournament_results %}
+                        {% for result in results %}
                           <tr>
                             <td>{{ result.id }}</td>
-                            <td>{{ result.tournament.start_date }}</td>
                             <td>{{ result.stage }}</td>
                             <td>{{ result.school1.name }}</td>
                             <td> {{ result.school1_score }} - {{ result.school2_score }} </td>
                             <td>{{ result.school2.name }}</td>
-                            <td>{{ result.created_at }}</td>
 
                           </tr>
                         {% endfor %}

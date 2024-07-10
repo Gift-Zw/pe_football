@@ -122,3 +122,23 @@ class TournamentPlayerForm(forms.Form):
         queryset=Player.objects.all(),
         widget=forms.Select(attrs={'class': 'form-control'})
     )
+
+
+class RegisterPlayersForm(forms.Form):
+    def __init__(self, *args, **kwargs):
+        school = kwargs.pop('school')
+        tournament = kwargs.pop('tournament')
+        super(RegisterPlayersForm, self).__init__(*args, **kwargs)
+        self.tournament = tournament
+        self.fields['players'] = forms.ModelMultipleChoiceField(
+            queryset=Player.objects.filter(school=school),
+            widget=forms.CheckboxSelectMultiple,
+            required=True
+        )
+
+    def clean_players(self):
+        players = self.cleaned_data.get('players')
+        for player in players:
+            if TournamentPlayer.objects.filter(tournament=self.tournament, player=player).exists():
+                raise forms.ValidationError(f"Player {player} is already registered for this tournament.")
+        return players

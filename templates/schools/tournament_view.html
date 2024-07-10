@@ -104,18 +104,15 @@
                             <th><strong>Name</strong></th>
                               <th><strong>Phone</strong></th>
                             <th><strong>City</strong></th>
-                               <th><strong>Date Registered</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for donation in donations %}
+                        {% for school in registered_schools %}
                           <tr>
-                            <td>{{ donation.id }}</td>
-                            <td>{{ donation.donor_name }}</td>
-                            <td>{{ donation.currency }}</td>
-                            <td>{{ donation.amount }}</td>
-                            <td>{{ donation.payment_method }}</td>
-                            <td>{{ donation.date }}</td>
+                            <td>{{ school.id }}</td>
+                            <td>{{ school.name }}</td>
+                            <td>{{ school.phone }}</td>
+                            <td>{{ school.city }}</td>
                           </tr>
                         {% endfor %}
                         </tbody>
@@ -133,7 +130,6 @@
                         <thead>
                           <tr>
                             <th><strong>#</strong></th>
-                            <th><strong>Date</strong></th>
                             <th><strong>Stage</strong></th>
                              <th><strong>School 1</strong></th>
                             <th><strong>Scoreline</strong></th>
@@ -144,13 +140,10 @@
                         {% for result in tournament_results %}
                           <tr>
                             <td>{{ result.id }}</td>
-                            <td>{{ result.tournament.start_date }}</td>
                             <td>{{ result.stage }}</td>
                             <td>{{ result.school1.name }}</td>
                             <td> {{ result.school1_score }} - {{ result.school2_score }} </td>
                             <td>{{ result.school2.name }}</td>
-                            <td>{{ result.created_at }}</td>
-
                           </tr>
                         {% endfor %}
                         </tbody>
@@ -165,7 +158,7 @@
                   <div class="card shadow">
                     <div class="card-header">
                       <strong class="card-title">Your Registered Players</strong>
-                        <a> <button class="float-right btn btn-primary btn-sm" data-toggle="modal" data-target="#verticalModal">Register Player</button></a>
+                        <a href="{% url 'schools:register_players_for_tournament' tournament.id %}"> <button class="float-right btn btn-primary btn-sm">Register Players</button></a>
                     </div>
                     <div class="card-body my-n2">
                          <table class="table datatables" id="dataTable-1">
@@ -176,36 +169,20 @@
                               <th><strong>Age</strong></th>
                               <th><strong>D.O.B</strong></th>
                               <th><strong>Position</strong></th>
-                            <th><strong>School</strong></th>
+                              <th><strong>Cell</strong></th>
                              <th><strong>Approved</strong></th>
-                            <th><strong>Date Added</strong></th>
-                               <th><strong>Action</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for player in players %}
+                        {% for player in registered_players %}
                           <tr>
                             <td>{{ player.id }}</td>
                             <td>{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</td>
                             <td>{{ player.age }}</td>
                             <td>{{ player.date_of_birth }}</td>
                             <td>{{ player.position }}</td>
-                            <td>${{ player.cell }}</td>
-                           <td>${{ player.national_id }}</td>
-                           <td>${{ player.guardian_name }}</td>
-                           <td>${{ player.guardian_contact }}</td>
-                           <td>${{ player.school.name }}</td>
-                           <td>${{ player.approved }}</td>
-                           <td>${{ player.created_at }}</td>
-                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="text-muted sr-only">Action</span>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Edit</a>
-                                <a class="dropdown-item" href="#">Remove</a>
-                                <a class="dropdown-item" href="#">Assign</a>
-                              </div>
-                            </td>
+                            <td>{{ player.cell }}</td>
+                           <td>{{ player.approved }}</td>
                           </tr>
                         {% endfor %}
                         </tbody>

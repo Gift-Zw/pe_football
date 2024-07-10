@@ -44,8 +44,9 @@ class Player(models.Model):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 
+
     def __str__(self):
-        return f"{self.name} - {self.school.name}"
+        return f"{self.first_name} {self.middle_name} {self.last_name}   |  Age: {self.age} |  Position: {self.position}".strip()
 
     @property
     def age(self):
@@ -62,6 +63,9 @@ class TournamentRegistration(models.Model):
 
     def __str__(self):
         return f"{self.school.name} - {self.tournament.name}"
+
+    def approve_reg(self):
+        self.approved = True
 
 
 class TournamentPlayer(models.Model):

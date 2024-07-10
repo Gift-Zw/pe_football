@@ -40,32 +40,51 @@
                         <thead >
                           <tr>
                             <th><strong>#</strong></th>
-                            <th><strong>Name</strong></th>
-                            <th><strong>Start Date</strong></th>
-                             <th><strong>End Date</strong></th>
-                            <th><strong>Time</strong></th>
-                            <th><strong>Participation Fee</strong></th>
+                            <th><strong>School</strong></th>
+                            <th><strong>Tournament</strong></th>
+                             <th><strong>Approved</strong></th>
                             <th><strong>Date Added</strong></th>
+                            <th><strong>Last Update</strong></th>
+                            <th><strong>Action</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for tournament in tournaments %}
+                        {% for reg in regs %}
                           <tr>
-                            <td>{{ tournament.id }}</td>
-                            <td>{{ tournament.name }}</td>
-                            <td>{{ tournament.start_date }}</td>
-                            <td>{{ tournament.end_date }}</td>
-                            <td>{{ tournament.end_date }}</td>
-                            <td>{{ tournament.time }}</td>
-                            <td>${{ tournament.date_added }}</td>
+                            <td>{{ reg.id }}</td>
+                            <td>{{ reg.school.name }}</td>
+                            <td>{{ reg.tournament.name }}</td>
+                            <td>{{ reg.approved }}</td>
+                            <td>{{ reg.created_at }}</td>
+                            <td>{{ reg.updated_at }}</td>
                              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted sr-only">Action</span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Edit</a>
-                                <a class="dropdown-item" href="#">Remove</a>
-                                <a class="dropdown-item" href="#">Assign</a>
+                                <a class="dropdown-item" data-toggle="modal" data-target="#grade7Result{{ reg.id }}Modal">View</a>
                               </div>
+                                 <!-- Grade 7 Result Modal -->
+                                <div class="modal fade" id="grade7Result{{ reg.id }}Modal" tabindex="-1" role="dialog" aria-labelledby="grade7ResultModalLabel" aria-hidden="true">
+                                  <div class="modal-dialog" role="document">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h5 class="modal-title" id="grade7ResultModalLabel">Grade 7 Result</h5>
+                                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                          <span aria-hidden="true">&times;</span>
+                                        </button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <img src="{{ reg.proof_of_payment.url }}" alt="Grade 7 Result" style="width: 100%; height: auto;">
+                                      </div>
+                                      <div class="modal-footer">
+                                          {% if  not reg.approved %}
+                                          <a href="{% url 'management:admin_tournament_approval' reg.id %}"> <button type="button" class="btn mb-2 btn-primary">Approve</button></a>
+                                          {% endif %}
+                                        <button type="button" class="btn mb-2 btn-secondary" data-dismiss="modal">Close</button>
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
                             </td>
                           </tr>
                         {% endfor %}

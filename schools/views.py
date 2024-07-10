@@ -2,7 +2,8 @@ from django.contrib import messages
 from django.contrib.auth import login, logout
 from django.contrib.auth.decorators import login_required
 from django.core.mail import EmailMessage
-from django.shortcuts import render, redirect
+from django import forms
+from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
 from core.admin import UserCreationForm
@@ -11,7 +12,7 @@ from django.contrib.auth.forms import AuthenticationForm
 from django.views.generic import CreateView
 from django.contrib.auth.views import LoginView
 from .models import SchoolProfile, TournamentRegistration, Player, TournamentPlayer
-from .forms import SchoolProfileForm, PlayerForm, TournamentPlayerForm, TournamentRegistrationForm
+from .forms import SchoolProfileForm, PlayerForm, TournamentPlayerForm, TournamentRegistrationForm, RegisterPlayersForm
 from management.models import Tournament, TournamentResults
 from .decorators import school_required
 
@@ -66,8 +67,10 @@ def upcoming_tournaments_view(request):
     profile = SchoolProfile.objects.filter(user=request.user).first()
     name = profile.name
     logo = profile.logo
+    registered_tournaments = TournamentRegistration.objects.filter(school=profile).values_list('tournament', flat=True)
+    unregistered_tournaments = Tournament.objects.exclude(id__in=registered_tournaments)
     context = {
-        'tournaments': Tournament.objects.all(),
+        'tournaments': unregistered_tournaments,
         'name': name,
         'logo': logo.url,
     }
@@ -79,9 +82,11 @@ def registered_tournaments_view(request):
     profile = SchoolProfile.objects.filter(user=request.user).first()
     name = profile.name
     logo = profile.logo
+
     context = {
         'name': name,
         'logo': logo.url,
+        'tournaments': Tournament.objects.filter(tournamentregistration__school=profile)
     }
     return render(request, 'schools/registered_tournaments.html', context)
 
@@ -93,7 +98,8 @@ def results_list_view(request):
     logo = profile.logo
     context = {
         'name': name,
-        'logo': logo.url
+        'logo': logo.url,
+        'tournament_results': TournamentResults.objects.filter(school1=profile) | TournamentResults.objects.filter(school2=profile)
     }
     return render(request, 'schools/result_list.html', context)
 
@@ -190,6 +196,8 @@ def tournament_detail_view(request, id):
     logo = profile.logo
     tournament = Tournament.objects.filter(id=id).first()
     reg = TournamentRegistration.objects.filter(school=profile, tournament=tournament)
+    tournament_players = TournamentPlayer.objects.filter(tournament_id=id).select_related('player')
+    players = [tp.player for tp in tournament_players]
 
     if request.method == "POST":
         form = TournamentRegistrationForm(request.POST, request.FILES)
@@ -210,9 +218,48 @@ def tournament_detail_view(request, id):
         'logo': logo.url,
         'form': TournamentRegistrationForm(),
         'is_registered': reg.exists(),
-        'reg':reg.first()
+        'reg': reg.first(),
+        'registered_schools': SchoolProfile.objects.filter(tournamentregistration__tournament=tournament),
+        'tournament_results': TournamentResults.objects.filter(tournament=tournament),
+        'registered_players': players
     }
     return render(request, 'schools/tournament_view.html', context)
+
+
+def register_players_for_tournament_view(request, tournament_id):
+    tournament = get_object_or_404(Tournament, id=tournament_id)
+    profile = SchoolProfile.objects.filter(user=request.user).first()
+    name = profile.name
+    logo = profile.logo
+
+    if request.method == 'POST':
+        form = RegisterPlayersForm(request.POST, school=profile, tournament=tournament)
+        if form.is_valid():
+            players = form.cleaned_data['players']
+            for player in players:
+                if player.age < tournament.age_limit:
+                    TournamentPlayer.objects.create(
+                        tournament=tournament,
+                        player=player,
+                        approved=False
+                    )
+                    messages.success(request, 'Players registered successfully.')
+                else:
+                    messages.error(request, 'Players age is above the age limits')
+
+            return redirect('schools:tournament_detail', tournament_id)
+        else:
+            messages.error(request, 'There was an error in the form')
+    else:
+        form = RegisterPlayersForm(school=profile, tournament=tournament)
+
+    context = {
+        'tournament': tournament,
+        'form': form,
+        'name': name,
+        'logo': logo.url,
+    }
+    return render(request, 'schools/register_players_for_tournament.html', context)
 
 
 @school_required()
