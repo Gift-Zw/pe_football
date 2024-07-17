@@ -47,7 +47,6 @@
                             <th><strong>Scoreline</strong></th>
                             <th><strong>School 2</strong></th>
                             <th><strong>Date Added</strong></th>
-                               <th><strong>Action</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
@@ -61,15 +60,6 @@
                             <td> {{ result.school1_score }} - {{ result.school2_score }} </td>
                             <td>{{ result.school2.name }}</td>
                             <td>{{ result.created_at }}</td>
-                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                <span class="text-muted sr-only">Action</span>
-                              </button>
-                              <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Edit</a>
-                                <a class="dropdown-item" href="#">Remove</a>
-                                <a class="dropdown-item" href="#">Assign</a>
-                              </div>
-                            </td>
 
                           </tr>
                         {% endfor %}

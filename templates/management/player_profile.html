@@ -169,14 +169,14 @@
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for donation in donations %}
+                        {% for tournament in tournaments %}
                           <tr>
                             <td>{{ tournament.id }}</td>
-                            <td>{{ tournament.name }}</td>
-                            <td>{{ tournament.age_limit }} years</td>
-                            <td>{{ tournament.start_date }}</td>
-                            <td>{{ tournament.time }}</td>
-                               <td>{{ tournament.venue }}</td>
+                            <td>{{ tournament.tournament.name }}</td>
+                            <td>{{ tournament.tournament.age_limit }} years</td>
+                            <td>{{ tournament.tournament.start_date }}</td>
+                            <td>{{ tournament.tournament.time }}</td>
+                               <td>{{ tournament.tournament.venue }}</td>
                           </tr>
                         {% endfor %}
                         </tbody>

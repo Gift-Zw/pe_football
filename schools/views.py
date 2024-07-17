@@ -55,9 +55,22 @@ def dashboard_view(request):
     profile = SchoolProfile.objects.filter(user=request.user).first()
     name = profile.name
     logo = profile.logo
+    total_result = TournamentResults.objects.filter(school1=profile).count() + TournamentResults.objects.filter(school2=profile).count()
+    total_players = Player.objects.filter(school=profile).count()
+    total_defenders = Player.objects.filter(position='Defender').count()
+    total_goalkeeper = Player.objects.filter(position='Goalkeeper').count()
+    total_attack = Player.objects.filter(position='Forward').count()
+    total_midfielder = Player.objects.filter(position='Midfielder').count()
     context = {
         'name': name,
-        'logo': logo.url
+        'logo': logo.url,
+        'total_players':total_players,
+        'total_results': total_result,
+        'total_midfielder':total_midfielder,
+        'total_attack': total_attack,
+        'total_goalkeeper': total_goalkeeper,
+        'total_defender': total_defenders,
+        'tournaments': Tournament.objects.all()
     }
     return render(request, 'schools/index.html', context)
 
@@ -167,10 +180,13 @@ def player_profile_view(request, id):
     name = profile.name
     logo = profile.logo
     player = Player.objects.filter(id=id).first()
+    tournaments= TournamentPlayer.objects.filter(player=player).select_related('tournament')
+    played_tournaments = [tp.tournament for tp in tournaments]
     context = {
         'player': player,
         'name': name,
-        'logo': logo.url
+        'logo': logo.url,
+        'tournaments': played_tournaments
     }
     return render(request, 'schools/player_profile.html', context)
 
@@ -196,7 +212,7 @@ def tournament_detail_view(request, id):
     logo = profile.logo
     tournament = Tournament.objects.filter(id=id).first()
     reg = TournamentRegistration.objects.filter(school=profile, tournament=tournament)
-    tournament_players = TournamentPlayer.objects.filter(tournament_id=id).select_related('player')
+    tournament_players = TournamentPlayer.objects.filter(tournament_id=id, player__school_id=profile.id).select_related('player')
     players = [tp.player for tp in tournament_players]
 
     if request.method == "POST":
@@ -245,11 +261,11 @@ def register_players_for_tournament_view(request, tournament_id):
                     )
                     messages.success(request, 'Players registered successfully.')
                 else:
-                    messages.error(request, 'Players age is above the age limits')
+                    messages.warning(request, 'Players age is above the age limits')
 
             return redirect('schools:tournament_detail', tournament_id)
         else:
-            messages.error(request, 'There was an error in the form')
+            messages.warning(request, 'There was an error in the form')
     else:
         form = RegisterPlayersForm(school=profile, tournament=tournament)
 

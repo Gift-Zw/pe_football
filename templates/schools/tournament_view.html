@@ -109,7 +109,7 @@
                         <tbody id="tbody">
                         {% for school in registered_schools %}
                           <tr>
-                            <td>{{ school.id }}</td>
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ school.name }}</td>
                             <td>{{ school.phone }}</td>
                             <td>{{ school.city }}</td>
@@ -176,7 +176,7 @@
                         <tbody id="tbody">
                         {% for player in registered_players %}
                           <tr>
-                            <td>{{ player.id }}</td>
+                            <td>{{forloop.counter }}</td>
                             <td>{{ player.first_name }} {{ player.middle_name }} {{ player.last_name }}</td>
                             <td>{{ player.age }}</td>
                             <td>{{ player.date_of_birth }}</td>

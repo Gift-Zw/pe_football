@@ -4,11 +4,98 @@ from django.contrib.auth.views import LoginView
 from django.shortcuts import render, redirect, get_object_or_404
 from django.urls import reverse_lazy
 from django.views.decorators.cache import cache_control
-from .models import Tournament, TournamentResults
+from .models import Tournament, TournamentResults, MediaContent
 from schools.models import SchoolProfile, Player, TournamentPlayer, TournamentRegistration
-from .forms import TournamentForm, TournamentResultsForm
+from .forms import TournamentForm, TournamentResultsForm, MediaContentForm
 from django import forms
 from .decorators import admin_required
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404
+from PIL import Image, ImageDraw, ImageFont
+import qrcode
+from reportlab.pdfgen import canvas
+from io import BytesIO
+from pe_football import settings
+import tempfile
+import os
+
+
+def generate_id_card(request, player_id):
+    player = get_object_or_404(Player, id=player_id)
+
+    # Load the ID card template
+    template_path = settings.BASE_DIR / settings.STATIC_CYBER / 'id.jpeg'
+    template = Image.open(template_path)
+
+    # Create a drawing context
+    draw = ImageDraw.Draw(template)
+
+    # Define a larger font size
+    heading_path = settings.BASE_DIR / settings.STATIC_CYBER / 'BRLNSDB.TTF'
+    font_path = settings.BASE_DIR / settings.STATIC_CYBER / 'Humanist521LightBT.ttf'
+    font = ImageFont.truetype(heading_path, 32)
+    name_font = ImageFont.truetype(heading_path, 44)
+    heading_font = ImageFont.truetype(font_path, 40)
+
+    # Player detailss
+    player_details = {
+        'photo_path': player.passport_photo.path,  # Adjust as needed
+        'dob': player.date_of_birth.strftime('%Y-%m-%d'),
+        'national_id': player.national_id,
+        'school': player.school.name,
+        'name': player.first_name + ' ' + player.last_name,
+        'position': player.position
+    }
+
+    # Positions on the ID card for each detail
+    positions = {
+        'name': (270, 282),
+        'position': (270, 285),
+        'photo': (270, 380),  # x, y coordinates for the photo
+        'dob': (310, 697),
+        'national_id': (310, 745),
+        'school': (310, 800)
+    }
+
+    # Load and place the player's photo
+    player_photo = Image.open(player_details['photo_path']).resize((250, 250))
+    template.paste(player_photo, positions['photo'])
+
+    # Draw text details with larger font size
+    draw.text(positions['name'], f"{player_details['name']}", font=name_font, fill="white")
+    draw.text(positions['dob'], f"{player_details['dob']}", font=font, fill="white")
+    draw.text(positions['national_id'], f"{player_details['national_id']}", font=font, fill="white")
+    draw.text(positions['school'], f"{player_details['school']}", font=font, fill="white")
+
+    # Generate a QR code with player details
+    qr_data = f"Name: {player.first_name} {player.last_name}\nDOB: {player_details['dob']}\nNational ID: {player_details['national_id']}"
+    qr = qrcode.QRCode(box_size=10, border=5)
+    qr.add_data(qr_data)
+    qr.make(fit=True)
+    qr_img = qr.make_image(fill='black', back_color='white').convert('RGB')
+
+    # Position and place the QR code on the ID card
+    qr_position = (570, 900)  # x, y coordinates for the QR code
+    qr_img = qr_img.resize((170, 170))  # Resize the QR code to fit on the card
+    template.paste(qr_img, qr_position)
+
+    # Save the ID card to a temporary file
+    temp_file = tempfile.NamedTemporaryFile(delete=False, suffix='.jpeg')
+    template.save(temp_file, 'JPEG')
+    temp_file.close()
+
+    # Read the temporary file and create an HTTP response with the image
+    with open(temp_file.name, 'rb') as f:
+        image_data = f.read()
+
+    # Clean up the temporary file
+    os.unlink(temp_file.name)
+
+    response = HttpResponse(image_data, content_type='image/jpeg')
+    response['Content-Disposition'] = f'inline; filename="{player.first_name}_{player.last_name}_id_card.jpeg"'
+
+    return response
+
 
 STAGE_CHOICES = [
     ('Group Stage', 'Group Stage'),
@@ -23,7 +110,7 @@ class UserLoginView(LoginView):
     template_name = 'management/user_login.html'
 
     def get_success_url(self):
-        return reverse_lazy('management:admin_dashboard')
+        return reverse_lazy('management:admin_upcoming_tournaments-list')
 
 
 @admin_required()
@@ -43,8 +130,11 @@ def player_list_view(request):
 @admin_required()
 def player_profile_view(request, id):
     player = Player.objects.filter(id=id).first()
+    tournaments = TournamentPlayer.objects.filter(player=player).select_related('tournament')
+    played_tournaments = [tp.tournament for tp in tournaments]
     context = {
         'player': player,
+        'tournaments': tournaments
     }
     return render(request, 'management/player_profile.html', context)
 
@@ -89,6 +179,8 @@ def past_tournament_list_view(request):
 @admin_required()
 def tournament_detail_view(request, id):
     tournament = Tournament.objects.filter(id=id).first()
+    tournament_players = TournamentPlayer.objects.filter(tournament_id=id).select_related('player')
+    players = [tp.player for tp in tournament_players]
 
     class InTournamentResultsForm(forms.Form):
         school1 = forms.ModelChoiceField(
@@ -122,7 +214,6 @@ def tournament_detail_view(request, id):
                 stage=form.data['stage']
             )
             result.save()
-            print('Heyyyyyy')
             return redirect('management:admin_tournament_detail', tournament.id)
         else:
             messages.error(request, form.errors)
@@ -133,7 +224,8 @@ def tournament_detail_view(request, id):
         'tournament': tournament,
         'form': InTournamentResultsForm(),
         'registered_schools': SchoolProfile.objects.filter(tournamentregistration__tournament=tournament),
-        'results': TournamentResults.objects.filter(tournament=tournament)
+        'results': TournamentResults.objects.filter(tournament=tournament),
+        'players': players
     }
     return render(request, 'management/tournament_details.html', context)
 
@@ -199,6 +291,30 @@ def results_list_view(request):
         'form': TournamentResultsForm()
     }
     return render(request, 'management/result_list.html', context)
+
+
+@admin_required()
+def gallery_posts_view(request):
+    if request.method == "POST":
+        form = MediaContentForm(request.POST, request.FILES)
+        if form.is_valid():
+            result = MediaContent.objects.create(
+                title=form.cleaned_data['title'],
+                description=form.cleaned_data['description'],
+                youtube_url=form.cleaned_data['youtube_url'],
+                cover_image=form.cleaned_data['cover_image']
+            )
+            result.save()
+            return redirect('management:admin_gallery')
+        else:
+            messages.error(request, form.errors)
+    else:
+        form = MediaContentForm()
+    context = {
+        'media_content': MediaContent.objects.all(),
+        'form': MediaContentForm()
+    }
+    return render(request, 'management/gallery_posts.html', context)
 
 
 @cache_control(no_cache=True, must_revalidate=True, no_store=True)

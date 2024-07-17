@@ -36,3 +36,14 @@ class TournamentResults(models.Model):
 
     def __str__(self):
         return f"{self.tournament.name}: {self.school1.name} vs {self.school2.name} - {self.school1_score}:{self.school2_score} ({self.stage})"
+
+
+class MediaContent(models.Model):
+    title = models.CharField(max_length=255)
+    description = models.TextField(max_length=800)
+    youtube_url = models.URLField()
+    cover_image = models.ImageField(upload_to='gallery')
+    date_added = models.DateField(auto_now_add=True)
+
+    def __str__(self):
+        return self.title

@@ -29,33 +29,23 @@
                 </div>
               </div>
               <div class="row items-align-baseline">
-                <div class="col-md-12 col-lg-6">
-                  <div class="card shadow eq-card mb-4">
-                    <div class="card shadow mb-4">
+              <div class="col-12 col-md-6">
+                  <div class="card shadow mb-4">
                     <div class="card-header">
-                     <h5> <strong class="card-title mb-0">Key Functions</strong></h5>
+                     <h4> <strong class="card-title mb-0">Game Result Analysis</strong></h4><span>(Total : {{ total_results }})</span>
                     </div>
-                        <div class="card shadow bg-success text-center mb-4">
-                    <div class="card-body p-5">
-                      <span class="circle circle-md bg-success-light">
-                        <i class="fe fe-navigation fe-24 text-white"></i>
-                      </span>
-                      <h3 class="h4 mt-4 mb-1 text-white">Register a Beneficiary</h3>
-                      <p class="text-white mb-4">Register your beneficiary to receive online donations</p>
-                      <a href="#" class="btn btn-lg bg-success-light text-white">Register<i class="fe fe-arrow-right fe-16 ml-2"></i></a>
-                    </div> <!-- .card-body -->
-                  </div>
-<!-- /.card-body -->
-                  </div>
-                  </div> <!-- .card -->
-                </div> <!-- .col -->
+                    <div class="card-body text-center">
+                      <div id="donutChartResult"></div>
+                    </div> <!-- /.card-body -->
+                  </div> <!-- /.card -->
+                </div>
                  <div class="col-12 col-md-6">
                   <div class="card shadow mb-4">
                     <div class="card-header">
-                     <h4> <strong class="card-title mb-0">Beneficiary Distribution</strong></h4><span>(Total : {{ beneficiary_total }})</span>
+                     <h4> <strong class="card-title mb-0">Player Position Distribution</strong></h4><span>(Total : {{ total_players }})</span>
                     </div>
                     <div class="card-body text-center">
-                      <div id="donutChart1"></div>
+                      <div id="positionChart"></div>
                     </div> <!-- /.card-body -->
                   </div> <!-- /.card -->
                 </div> <!-- /. co
@@ -69,30 +59,42 @@
                 <div class="col-md-12 col-lg-12">
                   <div class="card shadow">
                     <div class="card-header">
-                      <strong class="card-title">Recent Online Donations</strong>
-                      <a class="float-right small text-muted" href="#">View all</a>
+                      <strong class="card-title">Recently Uploaded Tournaments</strong>
+                      <a class="float-right small text-muted" href="{% url 'schools:upcoming_tournaments' %}">View all</a>
                     </div>
                     <div class="card-body my-n2">
                       <table class="table table-striped table-hover table-borderless">
                         <thead>
                           <tr>
                             <th><strong>#</strong></th>
-                            <th><strong>Donor Name</strong></th>
-                            <th><strong>Currency</strong></th>
-                            <th><strong>Amount</strong></th>
-                            <th><strong>Payment Method</strong></th>
-                               <th><strong>Date</strong></th>
+                            <th><strong>Name</strong></th>
+                              <th><strong>Age Limit</strong></th>
+                            <th><strong>Start Date</strong></th>
+                            <th><strong>Time</strong></th>
+                               <th><strong>Venue</strong></th>
+                            <th><strong>Participation Fee</strong></th>
+                            <th><strong>Date Added</strong></th>
+                               <th><strong>Action</strong></th>
                           </tr>
                         </thead>
                         <tbody id="tbody">
-                        {% for donation in donations %}
+                        {% for tournament in tournaments %}
                           <tr>
-                            <td>{{ donation.id }}</td>
-                            <td>{{ donation.donor_name }}</td>
-                            <td>{{ donation.currency }}</td>
-                            <td>{{ donation.amount }}</td>
-                            <td>{{ donation.payment_method }}</td>
-                            <td>{{ donation.date }}</td>
+                            <td>{{ tournament.id }}</td>
+                            <td>{{ tournament.name }}</td>
+                            <td>{{ tournament.age_limit }} years</td>
+                            <td>{{ tournament.start_date }}</td>
+                            <td>{{ tournament.time }}</td>
+                               <td>{{ tournament.venue }}</td>
+                            <td>${{ tournament.participation_fee }}</td>
+                            <td>{{ tournament.date_added }}</td>
+                             <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <span class="text-muted sr-only">Action</span>
+                              </button>
+                              <div class="dropdown-menu dropdown-menu-right">
+                                <a class="dropdown-item" href="{% url 'schools:tournament_detail' tournament.id %}">View</a>
+                              </div>
+                            </td>
                           </tr>
                         {% endfor %}
                         </tbody>
@@ -138,11 +140,11 @@
 
          var donutchart,
     donutChartOptions = {
-        series: [{{ orphanages_total }},{{ old_homes_total }}],
+        series: [5,2,3],
         chart: { type: "donut", height: 305, zoom: { enabled: !1 } },
         theme: { mode: colors.chartTheme },
         plotOptions: { pie: { donut: { size: "40%" }, expandOnClick: !1 } },
-        labels: ["Orphanages", "Old Peoples Homes",],
+        labels: ["Win", "Draw", "Lose"],
         legend: {
             position: "bottom",
             fontFamily: base.defaultFontFamily,
@@ -158,16 +160,16 @@
         stroke: { colors: [colors.borderColor], width: 1 },
         fill: { opacity: 1, colors: ['#1b68ff', '#3ad29f', '#fd7e14', '#dc3545', '#6f42c1', '#14fdf3'] },
     },
-    donutchartCtn = document.querySelector("#donutChart1");
+    donutchartCtn = document.querySelector("#donutChartResult");
 donutchartCtn && (donutchart = new ApexCharts(donutchartCtn, donutChartOptions)).render();
 
   var warrantyChart,
     warrantyChartOptions = {
-        series: [25,35,33,54,42,40],
+        series: [{{ total_goalkeeper }}, {{ total_defender }}, {{ total_midfielder }}, {{ total_attack }}],
         chart: { type: "donut", height: 305, zoom: { enabled: !1 } },
         theme: { mode: colors.chartTheme },
         plotOptions: { pie: { donut: { size: "40%" }, expandOnClick: !1 } },
-        labels: ["Received", "Under Review", "Closed", "Under Investigation", "Referred to Court", "Suspended"],
+        labels: ["Goalkeeper", "Defender", "Midfielder", "Forward"],
         legend: {
             position: "bottom",
             fontFamily: base.defaultFontFamily,
@@ -183,7 +185,7 @@ donutchartCtn && (donutchart = new ApexCharts(donutchartCtn, donutChartOptions))
         stroke: { colors: [colors.borderColor], width: 1 },
         fill: { opacity: 1, colors: ['#1b68ff', '#3ad29f', '#fd7e14', '#dc3545', '#6f42c1'] },
     },
-    warrantyChartCtn = document.querySelector("#warrantyChart");
+    warrantyChartCtn = document.querySelector("#positionChart");
 warrantyChartCtn && (warrantyChart = new ApexCharts(warrantyChartCtn, warrantyChartOptions)).render();
 
 </script>

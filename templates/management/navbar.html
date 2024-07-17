@@ -13,17 +13,13 @@
         </a>
         <nav class="vertnav navbar navbar-light">
           <!-- nav bar -->
-          <div class="w-100 mb-4 d-flex">
-            <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="{% url 'management:admin_dashboard' %}">
+{#          <div class="w-100 mb-4 d-flex">#}
+{#            <a class="navbar-brand mx-auto mt-2 flex-fill text-center" href="{% url 'management:admin_dashboard' %}">#}
 {#              <img src="{% static 'assets/images/logo.png' %}">#}
-            </a>
-          </div>
-          <ul class="navbar-nav flex-fill w-100 mb-2">
-            <li class="nav-item">
-              <a aria-expanded="false" class="nav-link" href="{% url 'management:admin_dashboard' %}" >
-                <i class="fe fe-home fe-16"></i>
-                <span class="ml-3 item-text">Dashboard</span><span class="sr-only">(current)</span>
-              </a>
+{#            </a>#}
+{#          </div>#}
+          <ul class="navbar-nav flex-fill w-100 mb-4">
+            <li class="nav-item mb-4">
             </li>
           </ul>
 
@@ -46,17 +42,18 @@
                 <span class="ml-3 item-text">Tournament Registrations</span>
               </a>
             </li>
-              <li class="nav-item w-100">
-              <a class="nav-link" href="{% url 'management:admin_tournament_players' %}">
-                <i class="fe fe-users fe-16"></i>
-                <span class="ml-3 item-text">Tournament Players</span>
-              </a>
-            </li>
 
               <li class="nav-item w-100">
               <a class="nav-link" href="{% url 'management:admin_result_list' %}">
                 <i class="fe fe-clipboard fe-16"></i>
                 <span class="ml-3 item-text">Results List</span>
+              </a>
+            </li>
+
+            <li class="nav-item w-100">
+              <a class="nav-link" href="{% url 'management:admin_gallery' %}">
+                <i class="fe fe-camera fe-16"></i>
+                <span class="ml-3 item-text">Gallery Posts</span>
               </a>
             </li>
 

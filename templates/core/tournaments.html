@@ -1,0 +1,106 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<body>
+	<!--[if lt IE 8]>
+		<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	<![endif]-->
+	<!--************************************
+			Wrapper Start
+	*************************************-->
+	<div id="tg-wrapper" class="tg-wrapper tg-haslayout">
+		<!--************************************
+				Mobile Menu Start
+		*************************************-->
+		{% include 'core/mobile_menu.html' %}
+		<!--************************************
+				Mobile Menu End
+		*************************************-->
+		<!--************************************
+				Header Start
+		*************************************-->
+		<header id="tg-header" class="tg-header tg-haslayout">
+			{% include 'core/navbar.html' %}
+		</header>
+		<!--************************************
+				Header End
+		*************************************-->
+		<!--************************************
+				Banner Start
+		*************************************-->
+		<div class="tg-banner tg-haslayout">
+			<div class="tg-imglayer">
+				<img src="{% static 'core/images/bg-pattran.png' %}" alt="image desctription">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="tg-banner-content tg-haslayout">
+						<div class="tg-pagetitle">
+							<h1 style="color:white;">Upcoming Tournaments</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--************************************
+				Banner End
+		*************************************-->
+		<!--************************************
+				Main Start
+		*************************************-->
+		<main id="tg-main" class="tg-main tg-haslayout">
+		<section class="tg-main-section tg-haslayout">
+				<div class="container">
+					<div class="tg-section-name">
+						<h2>Upcoming Tournament</h2>
+					</div>
+					<div class="col-sm-11 col-xs-11 pull-right">
+						<div class="row">
+                            {% for tournament in tournaments %}
+							<div class="tg-aboutussection" style="margin-bottom: 60px">
+								<div class="row">
+									<div class="col-md-6 col-sm-12 col-xs-12">
+										<figure>
+											<img src="{% static 'core/images/img-01.jpg' %}" alt="image description">
+										</figure>
+									</div>
+									<div class="col-md-6 col-sm-12 col-xs-12">
+										<div class="tg-contentbox">
+											<div class="tg-section-heading"><h2>{{ tournament.name }}</h2></div>
+											<div class="tg-description">
+												<p>The tournament will be held at{{ tournament.venue }} on {{  tournament.start_date }}. The games will begin at {{ tournament.time }}. The age limit for the tournament is {{ tournament.age_limit }}. A participation fee of  ${{ tournament.participation_fee }} is required to register for the tournament</p>
+											</div>
+											<div class="tg-btnbox">
+												<a class="tg-btn" href="{% url 'schools:tournament_detail' tournament.id %}"><span>Register for Tournament</span></a>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+                            {% endfor %}
+						</div>
+					</div>
+				</div>
+			</section>
+		</main>
+		<!--************************************
+				Main End
+		*************************************-->
+		<!--************************************
+				Footer Start
+		*************************************-->
+		{% include 'core/footer.html' %}
+		<!--************************************
+				Footer End
+		*************************************-->
+	</div>
+	<!--************************************
+			Wrapper End
+	*************************************-->
+
+
+
+{% endblock content %}

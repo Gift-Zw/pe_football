@@ -1,0 +1,114 @@
+{% extends 'core/base.html' %}
+{% load static %}
+
+
+{% block content %}
+
+<body>
+	<!--[if lt IE 8]>
+		<p class="browserupgrade">You are using an <strong>outdated</strong> browser. Please <a href="http://browsehappy.com/">upgrade your browser</a> to improve your experience.</p>
+	<![endif]-->
+	<!--************************************
+			Wrapper Start
+	*************************************-->
+	<div id="tg-wrapper" class="tg-wrapper tg-haslayout">
+		<!--************************************
+				Mobile Menu Start
+		*************************************-->
+		{% include 'core/mobile_menu.html' %}
+		<!--************************************
+				Mobile Menu End
+		*************************************-->
+		<!--************************************
+				Header Start
+		*************************************-->
+		<header id="tg-header" class="tg-header tg-haslayout">
+			{% include 'core/navbar.html' %}
+		</header>
+		<!--************************************
+				Header End
+		*************************************-->
+		<!--************************************
+				Banner Start
+		*************************************-->
+		<div class="tg-banner tg-haslayout">
+			<div class="tg-imglayer">
+				<img src="{% static 'core/images/bg-pattran.png' %}" alt="image desctription">
+			</div>
+			<div class="container">
+				<div class="row">
+					<div class="tg-banner-content tg-haslayout">
+						<div class="tg-pagetitle">
+							<h1 style="color:white;">match results</h1>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+		<!--************************************
+				Banner End
+		*************************************-->
+		<!--************************************
+				Main Start
+		*************************************-->
+		<main id="tg-main" class="tg-main tg-haslayout">
+			<section class="tg-main-section tg-haslayout">
+				<div class="container">
+					<div class="tg-section-name">
+						<h2>match result</h2>
+					</div>
+                    {% for result in results %}
+					<div class="col-sm-11 col-xs-11 pull-right" style="margin-bottom: 40px" >
+						<div class="row">
+							<div class="tab-content tg-tabscontent">
+								<div role="tabpanel" class="tab-pane fade in active" id="one">
+									<div class="tg-matchresult">
+										<div class="tg-box">
+											<div class="tg-score"><h3>{{ result.school1_score }} - {{ result.school2_score }}</h3></div>
+											<div class="tg-teamscore">
+												<strong class="tg-team-logo">
+													<img src="{{ result.school1.logo.url }}" alt="image description">
+												</strong>
+												<div class="tg-team-nameplusstatus">
+													<h4><a href="#">{{ result.school1.name }} </a></h4>
+												</div>
+											</div>
+											<div class="tg-teamscore">
+												<strong class="tg-team-logo">
+													<a href="#">
+														<img src="{{ result.school2.logo.url }}" alt="image description">
+													</a>
+												</strong>
+												<div class="tg-team-nameplusstatus">
+													<h4><a href="#">{{ result.school2.name }}</a></h4>
+												</div>
+											</div>
+										</div>
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+                    {% endfor %}
+
+				</div>
+			</section>
+		</main>
+		<!--************************************
+				Main End
+		*************************************-->
+		<!--************************************
+				Footer Start
+		*************************************-->
+		{% include 'core/footer.html' %}
+		<!--************************************
+				Footer End
+		*************************************-->
+	</div>
+	<!--************************************
+			Wrapper End
+	*************************************-->
+
+
+
+{% endblock content %}

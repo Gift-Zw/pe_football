@@ -36,7 +36,7 @@ class TournamentForm(forms.Form):
     )
     description = forms.CharField(
 
-        widget=forms.Textarea(attrs={'class': 'form-control', 'rows':2})
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2})
     )
 
 
@@ -83,4 +83,22 @@ class InTournamentResultsForm(forms.Form):
     stage = forms.ChoiceField(
         choices=STAGE_CHOICES,
         widget=forms.Select(attrs={'class': 'form-control'})
+    )
+
+
+class MediaContentForm(forms.Form):
+    title = forms.CharField(
+        max_length=255,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    youtube_url = forms.URLField(
+        max_length=255,
+        widget=forms.URLInput(attrs={'class': 'form-control'})
+    )
+
+    description = forms.CharField(
+        widget=forms.Textarea(attrs={'class': 'form-control', 'rows': 2})
+    )
+    cover_image = forms.ImageField(
+        widget=forms.FileInput(attrs={'class': 'form-control'})
     )

@@ -14,7 +14,7 @@
               <div class="row mt-5 align-items-center">
                 <div class="col-md-3 text-center mb-5">
                   <div class="avatar avatar-xl">
-                    <img src="{% static 'assets/avatars/face-1.jpg' %}" alt="..." class="avatar-img rounded-circle">
+                    <img src="{% static 'assets/images/soccer.jpg' %}" alt="..." class="avatar-img rounded-circle">
                   </div>
                 </div>
                 <div class="col">
@@ -68,7 +68,7 @@
                         <tbody id="tbody">
                         {% for school in registered_schools %}
                           <tr>
-                            <td>{{ school.id }}</td>
+                            <td>{{ forloop.counter }}</td>
                             <td>{{ school.name }}</td>
                             <td>{{ school.phone }}</td>
                             <td>{{ school.city }}</td>
@@ -172,7 +172,6 @@
                               <th><strong>Position</strong></th>
                             <th><strong>School</strong></th>
                              <th><strong>Approved</strong></th>
-                            <th><strong>Date Added</strong></th>
                                <th><strong>Action</strong></th>
                           </tr>
                         </thead>
@@ -184,24 +183,19 @@
                             <td>{{ player.age }}</td>
                             <td>{{ player.date_of_birth }}</td>
                             <td>{{ player.position }}</td>
-                            <td>${{ player.cell }}</td>
-                           <td>${{ player.national_id }}</td>
-                           <td>${{ player.guardian_name }}</td>
-                           <td>${{ player.guardian_contact }}</td>
-                           <td>${{ player.school.name }}</td>
-                           <td>${{ player.approved }}</td>
-                           <td>${{ player.created_at }}</td>
+                           <td>{{ player.school.name }}</td>
+                           <td>{{ player.approved }}</td>
                              <td><button class="btn btn-sm dropdown-toggle more-horizontal" type="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                 <span class="text-muted sr-only">Action</span>
                               </button>
                               <div class="dropdown-menu dropdown-menu-right">
-                                <a class="dropdown-item" href="#">Edit</a>
-                                <a class="dropdown-item" href="#">Remove</a>
-                                <a class="dropdown-item" href="#">Assign</a>
+                                <a class="dropdown-item" href="{% url 'management:admin_player_profile' player.id %}">View</a>
+                                <a class="dropdown-item" href="{% url 'management:generate_id_card' player.id %}" target="_blank" >Print ID</a>
                               </div>
                             </td>
                           </tr>
                         {% endfor %}
+
                         </tbody>
                       </table>
                     </div>
